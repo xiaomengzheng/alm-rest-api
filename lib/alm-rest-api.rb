@@ -3,7 +3,7 @@
 require "net/http"
 require "uri"
 
-BASE_URI = 'http://qc-tmp.wellsfargo.com/qcbin/'
+BASE_URI = 'http://10.0.0.8/qcbin/'
 
 # Logging in to our system is standard http login (basic authentication),
 # where one must store the returned cookies for further use.
@@ -66,7 +66,7 @@ if authenticationPoint != nil
 end
 
 # now we login to previously returned URL.
-loginResponse = login(authenticationPoint, "zhengxia", "Blackrock81")
+loginResponse = login(authenticationPoint, "sa", "C71a04t23")
 if loginResponse
     puts "login did not cause creation of Light Weight Single Sign On(LWSSO) cookie."
 else
