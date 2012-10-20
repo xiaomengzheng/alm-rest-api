@@ -1,4 +1,4 @@
-# Authenticate.rb
+# alm-rest-api.rb
 
 require "net/http"
 require "uri"
