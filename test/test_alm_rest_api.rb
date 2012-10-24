@@ -1,14 +1,19 @@
 require 'stringio'
 require 'test/unit'
-require File.dirname(__FILE__) + '/../lib/alm-test-api'
+require 'alm-rest-api'
 
 class TestALMRestAPI < Test::Unit::TestCase
 
   def setup
   end
   
- def test_login
-    ret = login(url, username, password)
-    assert ret
+  def test_AuthenticateLoginLogout
+    # Returns nil if authenticated. If not authenticated, returns
+    # a URL indicating where to login.
+    # We are not logged in, so call returns a URL
+    authenticationPoint = ALM.isAuthenticated()
+    assert_not_nil(authenticationPoint, "We are not logged in.")
+    
+    #ret = login(authenticationPoint, Constants.USERNAME, Constants.PASSWORD)
   end
 end
