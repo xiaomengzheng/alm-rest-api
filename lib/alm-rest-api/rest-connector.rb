@@ -83,7 +83,7 @@ class ALM::RestConnector
     
   def prepareHttpRequest(con, headers, bytes, cookieString)
     contentType = nil
-    if (cookieString != nil && !cookieString.empty)
+    if (cookieString != nil && !cookieString.empty?)
        con[Cookie] = cookieString
     end
         
@@ -122,7 +122,7 @@ class ALM::RestConnector
     
   def getCookieString
     s = StringIO.new
-    if (cookies!=nil && !cookies.empty)
+    if (!cookies.empty?)
       cookies.each{|key,value|
         s << key << '=' << 'value' << ';'
       }

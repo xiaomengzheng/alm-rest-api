@@ -1,10 +1,16 @@
 require 'stringio'
 require 'test/unit'
 require 'alm-rest-api'
+require 'alm-rest-api/constants'
 
 class TestALMRestAPI < Test::Unit::TestCase
 
   def setup
+    ALM::RestConnector.instance.init(Hash.new, 
+      ALM::Constants::HOST, 
+      ALM::Constants::PORT, 
+      ALM::Constants::DOMAIN, 
+      ALM::Constants::PROJECT)
   end
   
   def test_AuthenticateLoginLogout
