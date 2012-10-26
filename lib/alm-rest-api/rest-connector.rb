@@ -45,6 +45,11 @@ class ALM::RestConnector
   def httpGet(url, queryString, headers)
     return doHttp('GET', url, queryString, nil, headers, cookies)
   end
+  
+  def httpBasicAuth(url, username, password)
+    headers = {"username" => username, "password" => password}
+    return doHttp('AUTH', url, nil, nil, headers, cookies)    
+  end
     
   private
     
@@ -68,6 +73,9 @@ class ALM::RestConnector
       request.set_form_data({"users[login]" => "changed"})
     when "DELETE"
       request = Net::HTTP::Delete.new(uri.request_uri)
+    when "AUTH"
+      request = Net::HTTP::Get.new(uri.request_uri)
+      request.basic_auth(headers["username"], headers["password"])
     end
         
     cookieString = getCookieString()
@@ -75,10 +83,10 @@ class ALM::RestConnector
         
     response = http.request(request)  
         
-    #res = retrieveHtmlResponse(response)
-    #updateCookies(res)
+    res = retrieveHtmlResponse(response)
+    updateCookies(res)
         
-    return response  	
+    return res  	
   end
     
   def prepareHttpRequest(request, headers, bytes, cookieString)
@@ -97,26 +105,26 @@ class ALM::RestConnector
     if (bytes != nil)
       if (contentType != nil)
         request["Content-Type"] = contentType
-          
+        # submit some data  
       end
     end
   end
     
   def retrieveHtmlResponse(response)
-    res = Response.new
+    res = ALM::Response.new
     res.statusCode = response.code
-    res.responseHeaders = response.to_hash
-    res.responseData = response.form_data
+    res.responseHeaders = response
+    res.responseData = response.body
     
     return res
   end
     
   def updateCookies(response)
-    newCookies = response.responsHeaders['Set-Cookie']
+    newCookies = response.responseHeaders['Set-Cookie']
     if (newCookies != nil)
-      newCookies.each{|key, value|
+      #newCookies.each{|key, value|
         
-      }
+      #}
     end
   end
     

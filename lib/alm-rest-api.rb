@@ -5,8 +5,7 @@ module ALM
   # Logging in to our system is standard http login (basic authentication),
   # where one must store the returned cookies for further use.
   def self.login(loginUrl, username, password)
-    response = RestConnector.instance.httpGet(loginUrl, nil, nil)
-    request.basic_auth(username, password)
+    response = RestConnector.instance.httpBasicAuth(loginUrl, username, password)
 
     return response.statusCode == '200'
   end
@@ -23,7 +22,7 @@ module ALM
   def self.isAuthenticated()
     isAuthenticateUrl = RestConnector.instance.buildUrl("qcbin/rest/is-authenticated") 
     response = RestConnector.instance.httpGet(isAuthenticateUrl, nil, nil)
-    responseCode = response.code
+    responseCode = response.statusCode
 
     # if already authenticated
     # if not authenticated - get the address where to authenticate
@@ -31,7 +30,7 @@ module ALM
     if responseCode == "200"
       ret = nil
     elsif responseCode == "401"
-      authenticationHeader = response["WWW-Authenticate"]
+      authenticationHeader = response.responseHeaders["WWW-Authenticate"]
       newUrl = authenticationHeader.split("=").at(1)
       newUrl = newUrl.delete("\"")
       newUrl = newUrl + "/authenticate"

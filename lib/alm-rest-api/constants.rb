@@ -3,10 +3,10 @@
 # those of your server.
 class ALM::Constants
   HOST = "localhost"
-  PORT = "80"
+  PORT = "8080"
   USERNAME = "sa"
-  PASSWORD = ""
+  PASSWORD = "C71a04t23"
   DOMAIN = "DEFAULT"
-  PROJECT = "testProject"
+  PROJECT = "Simon"
   VERSIONED = true
 end

@@ -17,8 +17,11 @@ class TestALMRestAPI < Test::Unit::TestCase
     # a URL indicating where to login.
     # We are not logged in, so call returns a URL
     authenticationPoint = ALM.isAuthenticated()
-    assert_not_nil(authenticationPoint, "We are logged in.")
+    assert_not_nil(authenticationPoint, "response from isAuthenticated means we're authenticated. that can't be.")
     
-    #ret = login(authenticationPoint, Constants.USERNAME, Constants.PASSWORD)
+    # now we login to previously returned URL.
+    loginResponse = ALM.login(authenticationPoint, ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
+    assert(loginResponse, "failed to login.")
+    #assert(con.getCookieString().contains("LWSSO_COOKIE_KEY"), "login did not cause creation of Light Weight Single Sign On(LWSSO) cookie.");
   end
 end
