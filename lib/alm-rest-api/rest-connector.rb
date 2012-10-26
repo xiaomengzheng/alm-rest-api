@@ -26,8 +26,8 @@ class ALM::RestConnector
     return buildUrl('qcbin/rest/domains/' + domain + '/projects/' + project + '/' + entityType + 's')
   end
     
-  def buildUrl(patch)
-    return 'http://#{host}:#{port}/#{path}'
+  def buildUrl(path)
+    return "http://#{host}:#{port}/#{path}"
   end
     
   def httpPut(url, data, headers)
@@ -53,21 +53,21 @@ class ALM::RestConnector
     	url.concat('?' + queryString)
     end
     	  
-    http = Net::HTTP.new(url)
+    uri = URI.parse(url)
+    http = Net::HTTP.new(uri.host, uri.port)
 
     case type
     when "POST"
-      request = Net::HTTP::Post.new("/users")
+      request = Net::HTTP::Post.new(uri.request_uri)
       request.set_form_data({"users[login]" => "quentin"})
       # Use nokogiri, hpricot, etc to parse response.body.
     when "GET"
-      request = Net::HTTP::Get.new("/users/1")
-      # As with POST, the data is in response.body.
+      request = Net::HTTP::Get.new(uri.request_uri)
     when "PUT"
-      request = Net::HTTP::Put.new("/users/1")
+      request = Net::HTTP::Put.new(uri.request_uri)
       request.set_form_data({"users[login]" => "changed"})
     when "DELETE"
-      request = Net::HTTP::Delete.new("/users/1")
+      request = Net::HTTP::Delete.new(uri.request_uri)
     end
         
     cookieString = getCookieString()
@@ -75,38 +75,38 @@ class ALM::RestConnector
         
     response = http.request(request)  
         
-    res = retrieveHtmlResponse(con)
-    updateCookies(res)
+    #res = retrieveHtmlResponse(response)
+    #updateCookies(res)
         
-    return res  	
+    return response  	
   end
     
-  def prepareHttpRequest(con, headers, bytes, cookieString)
+  def prepareHttpRequest(request, headers, bytes, cookieString)
     contentType = nil
     if (cookieString != nil && !cookieString.empty?)
-       con[Cookie] = cookieString
+       request[Cookie] = cookieString
     end
         
     if (headers != nil)
       contentType = headers.delete("Content-Type")
       headers.each{|key, value|
-          con[key] = value
+          request[key] = value
       }
     end
     
     if (bytes != nil)
       if (contentType != nil)
-        con["Content-Type"] = contentType
+        request["Content-Type"] = contentType
           
       end
     end
   end
     
-  def retrieveHtmlResponse(con)
+  def retrieveHtmlResponse(response)
     res = Response.new
-    res.statusCode = con.code
-    res.responseHeaders = con.to_hash
-    res.responseData = con.form_data
+    res.statusCode = response.code
+    res.responseHeaders = response.to_hash
+    res.responseData = response.form_data
     
     return res
   end

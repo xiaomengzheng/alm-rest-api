@@ -1,6 +1,6 @@
 # alm-rest-api.rb
 
-class ALM
+module ALM
 
   # Logging in to our system is standard http login (basic authentication),
   # where one must store the returned cookies for further use.
@@ -14,16 +14,16 @@ class ALM
   def self.logout()
     # note the get operation logs us out by setting authentication cookies to:
     # LWSSO_COOKIE_KEY="" via server response header Set-Cookie
-    logoutUrl = RestConnector.instance.buildUrl("authentication-point/logout")
+    logoutUrl = RestConnector.instance.buildUrl("qcbin/authentication-point/logout")
     response = RestConnector.instance.httpGet(logoutUrl, nil, nil)
 
     return response.statusCode == '200'
   end
 
   def self.isAuthenticated()
-    isAuthenticateUrl = RestConnector.instance.buildUrl("rest/is-authenticate") 
+    isAuthenticateUrl = RestConnector.instance.buildUrl("qcbin/rest/is-authenticated") 
     response = RestConnector.instance.httpGet(isAuthenticateUrl, nil, nil)
-    responseCode = response.statusCode
+    responseCode = response.code
 
     # if already authenticated
     # if not authenticated - get the address where to authenticate
@@ -43,5 +43,6 @@ class ALM
 
 end
 
+require 'alm-rest-api/constants'
+require 'alm-rest-api/response'
 require 'alm-rest-api/rest-connector'
-

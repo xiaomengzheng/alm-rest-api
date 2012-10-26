@@ -3,7 +3,7 @@
 # those of your server.
 class ALM::Constants
   HOST = "localhost"
-  PORT = "8080"
+  PORT = "80"
   USERNAME = "sa"
   PASSWORD = ""
   DOMAIN = "DEFAULT"

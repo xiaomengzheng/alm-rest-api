@@ -1,7 +1,6 @@
 require 'stringio'
 require 'test/unit'
 require 'alm-rest-api'
-require 'alm-rest-api/constants'
 
 class TestALMRestAPI < Test::Unit::TestCase
 
@@ -18,7 +17,7 @@ class TestALMRestAPI < Test::Unit::TestCase
     # a URL indicating where to login.
     # We are not logged in, so call returns a URL
     authenticationPoint = ALM.isAuthenticated()
-    assert_not_nil(authenticationPoint, "We are not logged in.")
+    assert_not_nil(authenticationPoint, "We are logged in.")
     
     #ret = login(authenticationPoint, Constants.USERNAME, Constants.PASSWORD)
   end
