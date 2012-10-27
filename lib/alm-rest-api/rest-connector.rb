@@ -120,11 +120,15 @@ class ALM::RestConnector
   end
     
   def updateCookies(response)
-    newCookies = response.responseHeaders['Set-Cookie']
+    newCookies = response.responseHeaders.get_fields('Set-Cookie')
     if (newCookies != nil)
-      #newCookies.each{|key, value|
-        
-      #}
+      newCookies.each{|cookie|
+        c1 = cookie.split('; ')[0]
+        c2 = c1.split('=')
+        key = c2[0]
+        value = c2[1]
+        cookies[key] = value
+      }
     end
   end
     
