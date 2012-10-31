@@ -39,6 +39,25 @@ module ALM
 
     return ret
   end
+  
+  # convenience method to do user login
+  def self.isLoggedIn(username, password)
+    authenticationPoint = isAuthenticated();
+    if (authenticationPoint != null)
+        return login(authenticationPoint, username, password)
+    end
+    return true
+  end
+  
+  # read all defects fields 
+  def self.getDefectFields()
+    defectFieldsUrl = RestConnector.instance.buildEntityCollectionUrl("customization/entities/defect/field")
+    requestHeaders = Hash.new
+    requestHeaders["Accept"] = "application/xml"
+    response = RestConnector.instance.httpGet(defectFieldsUrl, nil, requestHeaders)
+    #parse the response xml to an object
+    return reponse.toString()
+  end
 
 end
 
