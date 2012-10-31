@@ -7,8 +7,5 @@ class ALM::Response
   def toString()
     return responseData
   end
-
-  def toString()
-    return responseData.body
-  end
+  
 end

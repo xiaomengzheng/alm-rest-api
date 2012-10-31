@@ -43,7 +43,7 @@ module ALM
   # convenience method to do user login
   def self.isLoggedIn(username, password)
     authenticationPoint = isAuthenticated();
-    if (authenticationPoint != null)
+    if (authenticationPoint != nil)
         return login(authenticationPoint, username, password)
     end
     return true
@@ -56,7 +56,7 @@ module ALM
     requestHeaders["Accept"] = "application/xml"
     response = RestConnector.instance.httpGet(defectFieldsUrl, nil, requestHeaders)
     #parse the response xml to an object
-    return reponse.toString()
+    return response.toString()
   end
 
 end

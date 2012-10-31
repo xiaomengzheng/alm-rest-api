@@ -34,4 +34,14 @@ class TestALMRestAPI < Test::Unit::TestCase
     # because isAuthenticated once again returns a url, and not null.
     assert_not_nil(ALM.isAuthenticated(), "isAuthenticated returned authenticated after logout.")    
   end
+  
+  def test_GetDefectFields
+    loginResponse = ALM.isLoggedIn(ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
+    assert(loginResponse, "failed to login.")
+      
+    defectFields = ALM.getDefectFields()
+    puts defectFields
+    
+  end
+  
 end
