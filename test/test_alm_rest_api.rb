@@ -22,6 +22,16 @@ class TestALMRestAPI < Test::Unit::TestCase
     # now we login to previously returned URL.
     loginResponse = ALM.login(authenticationPoint, ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
     assert(loginResponse, "failed to login.")
-    #assert(con.getCookieString().contains("LWSSO_COOKIE_KEY"), "login did not cause creation of Light Weight Single Sign On(LWSSO) cookie.");
+    assert((ALM::RestConnector.instance.getCookieString.include? "LWSSO_COOKIE_KEY"), "login did not cause creation of Light Weight Single Sign On(LWSSO) cookie.")
+    
+    # proof that we are indeed logged in
+    assert_nil(ALM.isAuthenticated(), "isAuthenticated returned not authenticated after login.")
+    
+    ## and now we logout
+    ALM.logout()
+    
+    # And now we can see that we are indeed logged out
+    # because isAuthenticated once again returns a url, and not null.
+    assert_not_nil(ALM.isAuthenticated(), "isAuthenticated returned authenticated after logout.")    
   end
 end

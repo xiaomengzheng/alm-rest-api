@@ -50,7 +50,18 @@ class ALM::RestConnector
     headers = {"username" => username, "password" => password}
     return doHttp('AUTH', url, nil, nil, headers, cookies)    
   end
-    
+
+  def getCookieString
+    s = StringIO.new
+    if (!cookies.empty?)
+      cookies.each{|key,value|
+        s << key << '=' << value << ';'
+      }
+    end
+  
+    return s.string
+  end
+      
   private
     
   def doHttp(type, url, queryString, data, headers, cookies)
@@ -92,7 +103,7 @@ class ALM::RestConnector
   def prepareHttpRequest(request, headers, bytes, cookieString)
     contentType = nil
     if (cookieString != nil && !cookieString.empty?)
-       request[Cookie] = cookieString
+       request["Cookie"] = cookieString
     end
         
     if (headers != nil)
@@ -123,7 +134,7 @@ class ALM::RestConnector
     newCookies = response.responseHeaders.get_fields('Set-Cookie')
     if (newCookies != nil)
       newCookies.each{|cookie|
-        c1 = cookie.split('; ')[0]
+        c1 = cookie.split(';')[0]
         c2 = c1.split('=')
         key = c2[0]
         value = c2[1]
@@ -132,14 +143,4 @@ class ALM::RestConnector
     end
   end
     
-  def getCookieString
-    s = StringIO.new
-    if (!cookies.empty?)
-      cookies.each{|key,value|
-        s << key << '=' << 'value' << ';'
-      }
-    end
-  
-    return s.string
-  end
 end
