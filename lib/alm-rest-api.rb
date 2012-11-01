@@ -50,11 +50,15 @@ module ALM
   end
   
   # read all defects fields 
-  def self.getDefectFields()
+  def self.getDefectFields(required = false)
     defectFieldsUrl = RestConnector.instance.buildEntityCollectionUrl("customization/entities/defect/field")
+    queryString = nil
+    if required
+      queryString = "required=true"
+    end
     requestHeaders = Hash.new
     requestHeaders["Accept"] = "application/xml"
-    response = RestConnector.instance.httpGet(defectFieldsUrl, nil, requestHeaders)
+    response = RestConnector.instance.httpGet(defectFieldsUrl, queryString, requestHeaders)
     #parse the response xml to an object
     return response.toString()
   end

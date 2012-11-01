@@ -39,7 +39,7 @@ class TestALMRestAPI < Test::Unit::TestCase
     loginResponse = ALM.isLoggedIn(ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
     assert(loginResponse, "failed to login.")
       
-    defectFields = ALM.getDefectFields()
+    defectFields = ALM.getDefectFields(false)
     puts defectFields
     
   end
