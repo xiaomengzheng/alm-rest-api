@@ -62,6 +62,32 @@ module ALM
     #parse the response xml to an object
     return response.toString()
   end
+  
+  # create new defect
+  def createDefect(postedDefectXml)
+    defectsUrl = RestConnector.instance.buildEntityCollectionUrl("defects")
+    requestHeaders = Hash.new
+    requestHeaders["Content-Type"] = "application/xml"
+    requestHeaders["Accept"] = "application/xml"
+
+    Response response = RestConnector.instance.httpPost(defectsUrl, postedDefectXml, requestHeaders)
+
+    defectUrl = response.getResponseHeaders["Location"]
+
+    return defectUrl
+  end
+  
+  def deleteDefect(defectUrl)
+    requestHeaders = Hash.new
+    requestHeaders["Accept"] = "application/xml"
+
+    Response response = RestConnector.instance.httpDelete(defectUrl, requestHeaders)
+    if (response.getStatusCode() != '200')
+        raise response.toString()
+    end
+
+    return response.toString()
+  end
 
 end
 

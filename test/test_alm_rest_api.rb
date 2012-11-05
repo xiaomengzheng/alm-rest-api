@@ -42,6 +42,16 @@ class TestALMRestAPI < Test::Unit::TestCase
     defectFields = ALM.getDefectFields(false)
     puts defectFields
     
+    ALM.logout()
+  end
+  
+  def test_CreateDeleteDefect
+    loginResponse = ALM.isLoggedIn(ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
+    assert(loginResponse, "failed to login.")
+    
+    
+    
+    ALM.logout()
   end
   
 end

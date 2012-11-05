@@ -65,7 +65,7 @@ class ALM::RestConnector
   private
     
   def doHttp(type, url, queryString, data, headers, cookies)
-    if (queryString != nil && !queryString.empty)
+    if (queryString != nil && !queryString.empty?)
     	url.concat('?' + queryString)
     end
     	  
