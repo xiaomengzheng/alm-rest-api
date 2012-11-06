@@ -46,12 +46,12 @@ class TestALMRestAPI < Test::Unit::TestCase
   end
   
   def test_CreateDeleteDefect
-    loginResponse = ALM.isLoggedIn(ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
-    assert(loginResponse, "failed to login.")
+    #loginResponse = ALM.isLoggedIn(ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
+    #assert(loginResponse, "failed to login.")
     
     
     
-    ALM.logout()
+    #ALM.logout()
   end
   
 end
