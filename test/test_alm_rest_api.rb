@@ -40,7 +40,8 @@ class TestALMRestAPI < Test::Unit::TestCase
     assert(loginResponse, "failed to login.")
       
     defectFields = ALM.getDefectFields(false)
-    puts defectFields
+    xml = defectFields.save_to_xml
+    xml.write($stdout,2)
     
     ALM.logout()
   end
