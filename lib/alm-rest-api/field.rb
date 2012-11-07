@@ -9,7 +9,7 @@ class Field
   element :Filterable, Boolean
   element :Groupable, Boolean
   element :History, Boolean
-  element :List-Id, Integer
+  element :'List-Id', Integer
   element :Type, String
   element :SupportsMultivalue, Boolean
   element :Required, Boolean

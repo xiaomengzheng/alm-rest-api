@@ -60,7 +60,12 @@ module ALM
     requestHeaders["Accept"] = "application/xml"
     response = RestConnector.instance.httpGet(defectFieldsUrl, queryString, requestHeaders)
     #defectFields = Entity.load_from_xml(response.toString())
+    puts response.toString()
     defectFields = Field.parse(response.toString())
+    #defectFields = response.toString()
+    defectFields.each{|field|
+      puts field.Active, field.Editable, field.Size, field.Filterable, ''
+    }
 
     return defectFields
   end

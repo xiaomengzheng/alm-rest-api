@@ -18,7 +18,6 @@ class TestALMRestAPI < Test::Unit::TestCase
     # We are not logged in, so call returns a URL
     authenticationPoint = ALM.isAuthenticated()
     assert_not_nil(authenticationPoint, "response from isAuthenticated means we're authenticated. that can't be.")
-    puts authenticationPoint
     
     # now we login to previously returned URL.
     loginResponse = ALM.login(authenticationPoint, ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
