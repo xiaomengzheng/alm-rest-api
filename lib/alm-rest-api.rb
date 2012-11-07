@@ -59,8 +59,9 @@ module ALM
     requestHeaders = Hash.new
     requestHeaders["Accept"] = "application/xml"
     response = RestConnector.instance.httpGet(defectFieldsUrl, queryString, requestHeaders)
-    defectFields = Entity.load_from_xml(response.toString())
-    
+    #defectFields = Entity.load_from_xml(response.toString())
+    defectFields = Field.parse(response.toString())
+
     return defectFields
   end
   
@@ -92,7 +93,8 @@ module ALM
 
 end
 
-require 'alm-rest-api/entity'
+#require 'alm-rest-api/entity'
+require 'alm-rest-api/field'
 require 'alm-rest-api/constants'
 require 'alm-rest-api/response'
 require 'alm-rest-api/rest-connector'

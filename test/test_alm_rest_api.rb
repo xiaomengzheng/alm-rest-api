@@ -18,6 +18,7 @@ class TestALMRestAPI < Test::Unit::TestCase
     # We are not logged in, so call returns a URL
     authenticationPoint = ALM.isAuthenticated()
     assert_not_nil(authenticationPoint, "response from isAuthenticated means we're authenticated. that can't be.")
+    puts authenticationPoint
     
     # now we login to previously returned URL.
     loginResponse = ALM.login(authenticationPoint, ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
@@ -39,9 +40,13 @@ class TestALMRestAPI < Test::Unit::TestCase
     loginResponse = ALM.isLoggedIn(ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
     assert(loginResponse, "failed to login.")
       
-    defectFields = ALM.getDefectFields(false)
-    xml = defectFields.save_to_xml
-    xml.write($stdout,2)
+    defectFields = ALM.getDefectFields(true)
+    defectFields.each do |field|
+      puts field.Active, field.Editable, field.Size, field.Filterable, ''
+    end
+    #puts defectFields
+    #xml = defectFields.save_to_xml
+    #xml.write($stdout,2)
     
     ALM.logout()
   end
