@@ -1,16 +1,24 @@
-require 'xml/mapping'
-
-class Field; end
-
-class Entity
-  include XML::Mapping
-  
-  text_node :type, "Type"
-  array_node :fields, "Fields", "Field", :class=>Field, :default_value=>[]
-end
+require 'happymapper'
 
 class Field
-  include XML::Mapping
+  include HappyMapper
 
-  text_node :name, "Name"
+  tag 'Field'
+  attribute :name, String, :tag => 'Name'
+  element :value, String, :tag => 'Value'
+end
+
+class Fields
+  include HappyMapper
+  
+  tag 'Fields'
+  has_many :fields, Field
+end
+
+class Entity
+  include HappyMapper
+  
+  tag 'Entity'
+  attribute :type, String, :tag => 'Type'
+  element :fields, Fields
 end

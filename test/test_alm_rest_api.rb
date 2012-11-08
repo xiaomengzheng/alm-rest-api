@@ -40,12 +40,16 @@ class TestALMRestAPI < Test::Unit::TestCase
     assert(loginResponse, "failed to login.")
       
     defectFields = ALM.getDefectFields(true)
-    defectFields.each do |field|
-      puts field.Active, field.Editable, field.Size, field.Filterable, ''
+    defectFields.fields.each do |field|
+      puts "Name = #{field.name}"
+      puts "Label = #{field.label}"
+      puts "Size = #{field.size}"
+      puts "Type = #{field.type}"
+      puts "Required = #{field.required}"
+      puts "--------------------------"
     end
-    #puts defectFields
-    #xml = defectFields.save_to_xml
-    #xml.write($stdout,2)
+    
+    puts defectFields.to_xml
     
     ALM.logout()
   end
