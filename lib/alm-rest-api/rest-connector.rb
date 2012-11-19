@@ -75,13 +75,10 @@ class ALM::RestConnector
     case type
     when "POST"
       request = Net::HTTP::Post.new(uri.request_uri)
-      request.set_form_data({"users[login]" => "quentin"})
-      # Use nokogiri, hpricot, etc to parse response.body.
     when "GET"
       request = Net::HTTP::Get.new(uri.request_uri)
     when "PUT"
       request = Net::HTTP::Put.new(uri.request_uri)
-      request.set_form_data({"users[login]" => "changed"})
     when "DELETE"
       request = Net::HTTP::Delete.new(uri.request_uri)
     when "AUTH"
@@ -100,7 +97,7 @@ class ALM::RestConnector
     return res  	
   end
     
-  def prepareHttpRequest(request, headers, bytes, cookieString)
+  def prepareHttpRequest(request, headers, data, cookieString)
     contentType = nil
     if (cookieString != nil && !cookieString.empty?)
        request["Cookie"] = cookieString
@@ -113,10 +110,10 @@ class ALM::RestConnector
       }
     end
     
-    if (bytes != nil)
+    if (data != nil)
       if (contentType != nil)
         request["Content-Type"] = contentType
-        # submit some data  
+        request.body = data 
       end
     end
   end

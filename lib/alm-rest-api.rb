@@ -64,36 +64,80 @@ module ALM
     return defectFields
   end
   
+  # read pre-defined defects fields values
+  def self.getValueLists(defectFields = nil)
+    valueListsUrl = RestConnector.instance.buildEntityCollectionUrl("customization/list")
+    queryString = nil
+    if defectFields
+      defectFields.fields.each do |field|
+        if field.list_id
+          if queryString == nil
+            queryString = "id=" + field.list_id.to_s
+          else
+            queryString = queryString + "," + field.list_id.to_s
+          end
+        end
+      end
+    end
+    requestHeaders = Hash.new
+    requestHeaders["Accept"] = "application/xml"
+    response = RestConnector.instance.httpGet(valueListsUrl, queryString, requestHeaders)
+    valueLists = ValueLists::Lists.parse(response.toString())
+
+    return valueLists
+  end
+  
   # create new defect
-  def createDefect(postedDefectXml)
-    defectsUrl = RestConnector.instance.buildEntityCollectionUrl("defects")
+  def self.createDefect(defect)
+    defectsUrl = RestConnector.instance.buildEntityCollectionUrl("defect")
     requestHeaders = Hash.new
     requestHeaders["Content-Type"] = "application/xml"
     requestHeaders["Accept"] = "application/xml"
 
-    Response response = RestConnector.instance.httpPost(defectsUrl, postedDefectXml, requestHeaders)
+    Response response = RestConnector.instance.httpPost(defectsUrl, defect.to_xml, requestHeaders)
 
     defectUrl = response.getResponseHeaders["Location"]
 
+    #return a defect id
     return defectUrl
   end
   
-  def deleteDefect(defectUrl)
+  # delete a defect
+  def self.deleteDefect(defectUrl)
     requestHeaders = Hash.new
     requestHeaders["Accept"] = "application/xml"
 
     Response response = RestConnector.instance.httpDelete(defectUrl, requestHeaders)
-    if (response.getStatusCode() != '200')
+    if (response.statusCode() != '200')
         raise response.toString()
     end
 
-    return response.toString()
+    return response.statusCode == '200'
+  end
+  
+  # attach a file
+  def self.attachWithMultipart(defectId, filePath)
+    attachmentUrl = RestConnector.instance.buildEntityCollectionUrl("attachment")
+    boundary = "AaB03x"
+    requestHeaders = Hash.new
+    requestHeaders["Content-Type"] = "multipart/form-data, boundary=#{boundary}"
+
+    post_body = []
+    post_body < < "--#{boundary}rn"
+    post_body < < "Content-Disposition: form-data; name="datafile"; filename="#{File.basename(file)}"rn"
+    post_body < < "Content-Type: text/plainrn"
+    post_body < < "rn"
+    post_body < < File.read(file)
+    post_body < < "rn--#{boundary}--rn"    
+    
+    Response response = RestConnector.instance.httpPost(attachmentUrl, post_body, requestHeaders)
   end
 
 end
 
-#require 'alm-rest-api/entity'
+require 'alm-rest-api/entity'
 require 'alm-rest-api/defect-fields'
+require 'alm-rest-api/value-lists'
 require 'alm-rest-api/constants'
 require 'alm-rest-api/response'
 require 'alm-rest-api/rest-connector'

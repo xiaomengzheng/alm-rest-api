@@ -18,6 +18,12 @@ end
 class Entity
   include HappyMapper
   
+  def initialize(type)
+    @type = type
+    @fields = Fields.new
+    @fields.fields = Array.new  
+  end    
+    
   tag 'Entity'
   attribute :type, String, :tag => 'Type'
   element :fields, Fields
