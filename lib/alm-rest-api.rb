@@ -59,7 +59,11 @@ module ALM
     requestHeaders = Hash.new
     requestHeaders["Accept"] = "application/xml"
     response = RestConnector.instance.httpGet(defectFieldsUrl, queryString, requestHeaders)
-    defectFields = DefectFields::Fields.parse(response.toString())
+    
+    defectFields = nil
+    if response.statusCode == '200'
+      defectFields = DefectFields::Fields.parse(response.toString())
+    end
 
     return defectFields
   end
@@ -79,10 +83,15 @@ module ALM
         end
       end
     end
+
     requestHeaders = Hash.new
     requestHeaders["Accept"] = "application/xml"
     response = RestConnector.instance.httpGet(valueListsUrl, queryString, requestHeaders)
-    valueLists = ValueLists::Lists.parse(response.toString())
+    
+    valueLists = nil
+    if response.statusCode == '200'
+      valueLists = ValueLists::Lists.parse(response.toString())
+    end
 
     return valueLists
   end
@@ -94,11 +103,15 @@ module ALM
     requestHeaders["Content-Type"] = "application/xml"
     requestHeaders["Accept"] = "application/xml"
 
-    Response response = RestConnector.instance.httpPost(defectsUrl, defect.to_xml, requestHeaders)
+    response = RestConnector.instance.httpPost(defectsUrl, defect.to_xml, requestHeaders)
+    puts response.toString()
+    
+    defectUrl = nil
+    if response.statusCode == '200'
+      defectUrl = response.getResponseHeaders["Location"]
+    end
 
-    defectUrl = response.getResponseHeaders["Location"]
-
-    #return a defect id
+    #return a defect id instead
     return defectUrl
   end
   
@@ -107,11 +120,8 @@ module ALM
     requestHeaders = Hash.new
     requestHeaders["Accept"] = "application/xml"
 
-    Response response = RestConnector.instance.httpDelete(defectUrl, requestHeaders)
-    if (response.statusCode() != '200')
-        raise response.toString()
-    end
-
+    response = RestConnector.instance.httpDelete(defectUrl, requestHeaders)
+ 
     return response.statusCode == '200'
   end
   
@@ -122,15 +132,15 @@ module ALM
     requestHeaders = Hash.new
     requestHeaders["Content-Type"] = "multipart/form-data, boundary=#{boundary}"
 
-    post_body = []
-    post_body < < "--#{boundary}rn"
-    post_body < < "Content-Disposition: form-data; name="datafile"; filename="#{File.basename(file)}"rn"
-    post_body < < "Content-Type: text/plainrn"
-    post_body < < "rn"
-    post_body < < File.read(file)
-    post_body < < "rn--#{boundary}--rn"    
+    #post_body = []
+    #post_body < < "--#{boundary}rn"
+    #post_body < < "Content-Disposition: form-data; name="datafile"; filename="#{File.basename(file)}"rn"
+    #post_body < < "Content-Type: text/plainrn"
+    #post_body < < "rn"
+    #post_body < < File.read(file)
+    #post_body < < "rn--#{boundary}--rn"    
     
-    Response response = RestConnector.instance.httpPost(attachmentUrl, post_body, requestHeaders)
+    #Response response = RestConnector.instance.httpPost(attachmentUrl, post_body, requestHeaders)
   end
 
 end
