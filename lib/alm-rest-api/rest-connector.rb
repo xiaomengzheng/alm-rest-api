@@ -25,6 +25,10 @@ class ALM::RestConnector
   def buildEntityCollectionUrl(entityType)
     return buildUrl('qcbin/rest/domains/' + domain + '/projects/' + project + '/' + entityType + 's')
   end
+
+  def buildDefectUrl(defectId)
+    return buildUrl('qcbin/rest/domains/' + domain + '/projects/' + project + '/defects/' + defectId)
+  end
     
   def buildUrl(path)
     return "http://#{host}:#{port}/#{path}"

@@ -70,7 +70,8 @@ module ALM
   
   # read pre-defined defects fields values
   def self.getValueLists(defectFields = nil)
-    valueListsUrl = RestConnector.instance.buildEntityCollectionUrl("customization/list")
+    # ALM 11.0 the url is "customization/list"
+    valueListsUrl = RestConnector.instance.buildEntityCollectionUrl("customization/used-list")
     queryString = nil
     if defectFields
       defectFields.fields.each do |field|
@@ -104,19 +105,19 @@ module ALM
     requestHeaders["Accept"] = "application/xml"
 
     response = RestConnector.instance.httpPost(defectsUrl, defect.to_xml, requestHeaders)
-    puts response.toString()
     
-    defectUrl = nil
-    if response.statusCode == '200'
-      defectUrl = response.getResponseHeaders["Location"]
+    defectId = nil
+    if response.statusCode == '201'
+      defectUrl = response.responseHeaders["Location"]
+      defectId = defectUrl.split('/').last
     end
 
-    #return a defect id instead
-    return defectUrl
+    return defectId
   end
   
   # delete a defect
-  def self.deleteDefect(defectUrl)
+  def self.deleteDefect(defectId)
+    defectUrl = RestConnector.instance.buildDefectUrl(defectId)
     requestHeaders = Hash.new
     requestHeaders["Accept"] = "application/xml"
 

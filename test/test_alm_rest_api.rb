@@ -13,6 +13,7 @@ class TestALMRestAPI < Test::Unit::TestCase
   end
   
   def test_AuthenticateLoginLogout
+    if false # change to true if you want run the test case
     # Returns nil if authenticated. If not authenticated, returns
     # a URL indicating where to login.
     # We are not logged in, so call returns a URL
@@ -32,10 +33,12 @@ class TestALMRestAPI < Test::Unit::TestCase
     
     # And now we can see that we are indeed logged out
     # because isAuthenticated once again returns a url, and not null.
-    assert_not_nil(ALM.isAuthenticated(), "isAuthenticated returned authenticated after logout.")    
+    assert_not_nil(ALM.isAuthenticated(), "isAuthenticated returned authenticated after logout.")  
+    end  
   end
   
   def test_GetDefectFields
+    if false # change to true if you want run the test case
     loginResponse = ALM.isLoggedIn(ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
     assert(loginResponse, "failed to login.")
 
@@ -64,9 +67,11 @@ class TestALMRestAPI < Test::Unit::TestCase
     end  
     
     ALM.logout()
+    end
   end
   
   def test_CreateDeleteDefect
+    if true # change to true if you want run the test case
     loginResponse = ALM.isLoggedIn(ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
     assert(loginResponse, "failed to login.")
     
@@ -78,9 +83,17 @@ class TestALMRestAPI < Test::Unit::TestCase
       defectFields.fields.each do |field|
         defectField = Field.new
         defectField.name = field.name
-        if (field.list_id && valueLists)
-          items = ValueLists.getValuesById(field.list_id, valueLists)
-          defectField.value = items.first.value
+        type = field.type
+        case type
+        when "LookupList"
+          if valueLists
+            items = ValueLists.getValuesById(field.list_id, valueLists)
+            defectField.value = items.first.value
+          end
+        when "Date"
+          defectField.value = Time.now.strftime("%Y-%m-%d")
+        when "UsersList"
+          defectField.value = ALM::Constants::USERNAME
         else
           defectField.value = "0"
         end
@@ -89,15 +102,17 @@ class TestALMRestAPI < Test::Unit::TestCase
       
       puts defect.to_xml
       
-      defectUrl = ALM.createDefect(defect)
-      puts defectUrl
-    
-      if defectUrl
-        deleteResponse = ALM.deleteDefect(defectUrl)
+      defectId = ALM.createDefect(defect)
+      assert_not_nil(defectId, "fail to create defect.")
+
+      if defectId
+        deleteResponse = ALM.deleteDefect(defectId)
+        assert(deleteResponse, "failed to delete defect.")
       end
     end
     
     ALM.logout()
+    end
   end
   
 end
