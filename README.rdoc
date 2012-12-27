@@ -34,4 +34,4 @@ http://github.com/xiaomengzheng/alm-rest-api/tree/master/test/
 
 == DOCS:
 
-http://rdoc.info/projects/xiaomengzheng/alm-rest-api
+http://rdoc.info/github/xiaomengzheng/alm-rest-api/master/frames
