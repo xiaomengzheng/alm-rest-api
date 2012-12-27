@@ -18,7 +18,7 @@ end
 class Entity
   include HappyMapper
   
-  def initialize(type)
+  def init(type)
     @type = type
     @fields = Fields.new
     @fields.fields = Array.new  

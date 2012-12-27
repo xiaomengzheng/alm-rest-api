@@ -115,6 +115,34 @@ module ALM
     return defectId
   end
   
+  # read a defect
+  def self.readDefect(defectId)
+    defectUrl = RestConnector.instance.buildDefectUrl(defectId)
+    requestHeaders = Hash.new
+    requestHeaders["Accept"] = "application/xml"
+
+    response = RestConnector.instance.httpGet(defectUrl, nil, requestHeaders)
+ 
+    defect = nil
+    if response.statusCode == '200'
+      defect = Entity.parse(response.toString())
+    end
+
+    return defect
+  end
+  
+  # update defect
+  def self.updateDefect(defectId, defect)
+    defectUrl = RestConnector.instance.buildDefectUrl(defectId)
+   
+    requestHeaders = Hash.new
+    requestHeaders["Content-Type"] = "application/xml"
+    requestHeaders["Accept"] = "application/xml"
+    put = RestConnector.instance.httpPut(defectUrl, defect.to_xml, requestHeaders)
+    
+    return put
+  end
+    
   # delete a defect
   def self.deleteDefect(defectId)
     defectUrl = RestConnector.instance.buildDefectUrl(defectId)
@@ -126,22 +154,81 @@ module ALM
     return response.statusCode == '200'
   end
   
-  # attach a file
-  def self.attachWithMultipart(defectId, filePath)
-    attachmentUrl = RestConnector.instance.buildEntityCollectionUrl("attachment")
-    boundary = "AaB03x"
+  # checkout defect
+  # return a string description of the checked out defect
+  # ==== Attributes  
+  #  
+  # * +defectId+ - The id of the defect you wish to checkout.  
+  # * +comment+ - to keep on the server side of why you checked this entity out.  
+  # * +version+ - to checkout or -1 if you want the latest.  
+  def self.checkoutDefect(defectId, comment, version)
+    defectUrl = RestConnector.instance.buildDefectUrl(defectId)
+    commentXmlBit = ((comment != nil) && !comment.isEmpty()? "<Comment>" + comment + "</Comment>" : "")
+    versionXmlBit = (version >= 0 ? "<Version>" + version + "</Version>" : "")
+    xmlData = commentXmlBit + versionXmlBit
+    xml = xmlData.isEmpty() ? "" : "<CheckOutParameters>" + xmlData + "</CheckOutParameters>"
     requestHeaders = Hash.new
-    requestHeaders["Content-Type"] = "multipart/form-data, boundary=#{boundary}"
-
-    #post_body = []
-    #post_body < < "--#{boundary}rn"
-    #post_body < < "Content-Disposition: form-data; name="datafile"; filename="#{File.basename(file)}"rn"
-    #post_body < < "Content-Type: text/plainrn"
-    #post_body < < "rn"
-    #post_body < < File.read(file)
-    #post_body < < "rn--#{boundary}--rn"    
+    requestHeaders["Content-Type"] = "application/xml"
+    requestHeaders["Accept"] = "application/xml"
+    response = RestConnector.instance.httpPost(defectUrl + "/versions/check-out", xml, requestHeaders)
+         
+    return response.toString()
+  end
+  
+  # checkout defect
+  def self.checkinDefect(defectId)
+    defectUrl = RestConnector.instance.buildDefectUrl(defectId)
+    response = RestConnector.instance.httpPost(defectUrl + "/versions/check-in", nil, nil)
     
-    #Response response = RestConnector.instance.httpPost(attachmentUrl, post_body, requestHeaders)
+    return response.statusCode == '200'
+  end
+  
+  # lock defect
+  def self.lockDefect(defectId)
+    defectUrl = RestConnector.instance.buildDefectUrl(defectId)
+    requestHeaders = Hash.new
+    requestHeaders["Accept"] = "application/xml"
+    response = RestConnector.instance.httpPost(defectUrl + "/lock", nil, requestHeaders)
+    
+    return response.toString()
+  end
+
+  # unlock defect
+  def self.unlockDefect(defectId)
+    defectUrl = RestConnector.instance.buildDefectUrl(defectId)
+    response = RestConnector.instance.httpDelete(defectUrl + "/lock", nil)
+    
+    return response.statusCode == '200'
+  end
+
+  # attach a file
+  def self.addDefectAttachment(defectId, filePath, contentType, description)
+    defectUrl = RestConnector.instance.buildDefectUrl(defectId)
+    boundary = "exampleboundary"
+    requestHeaders = Hash.new
+    requestHeaders["Content-Type"] = "multipart/form-data; boundary=#{boundary}"
+
+    # The order is extremely important: 
+    # The filename and description come before file data. 
+    # The name of the file in the file part and in the filename part value MUST MATCH.
+    post_body = []
+    post_body << "--#{boundary}\r\n"
+    post_body << "Content-Disposition: form-data; name=\"filename\" \r\n\r\n"
+    post_body << "#{File.basename(filePath)}"
+    post_body << "\r\n"
+    post_body << "--#{boundary}\r\n"
+    post_body << "Content-Disposition: form-data; name=\"description\" \r\n\r\n"
+    post_body << "#{description}"
+    post_body << "\r\n"
+    post_body << "--#{boundary}\r\n"
+    post_body << "Content-Disposition: form-data; name=\"file\"; filename=\"#{File.basename(filePath)}\"\r\n"
+    post_body << "Content-Type: #{contentType}\r\n\r\n"
+    post_body << File.read(filePath)
+    post_body << "\r\n--#{boundary}--"
+    
+    response = RestConnector.instance.httpPost(defectUrl + "/attachments", post_body.join, requestHeaders)
+
+    return response.responseHeaders["Location"]
   end
 
 end

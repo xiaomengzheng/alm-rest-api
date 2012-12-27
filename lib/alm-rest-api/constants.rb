@@ -8,5 +8,5 @@ class ALM::Constants
   PASSWORD = "C71a04t23"
   DOMAIN = "DEFAULT"
   PROJECT = "Simon"
-  VERSIONED = true
+  VERSIONED = false
 end

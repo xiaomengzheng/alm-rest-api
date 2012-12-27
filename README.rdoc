@@ -1,0 +1,37 @@
+= alm-rest-api
+
+== DESCRIPTION:
+
+HP ALM REST API integration. 
+
+== FEATURES:
+
+* Encapsulate all the details of making REST API call using net/http lib
+* Provide xml <--> class mapping using HappyMapper lib
+
+== EXAMPLES:
+
+Here is a simple example that login and logout ALM server.
+
+  ALM::RestConnector.instance.init(Hash.new, 
+      ALM::Constants::HOST, 
+      ALM::Constants::PORT, 
+      ALM::Constants::DOMAIN, 
+      ALM::Constants::PROJECT)
+      
+  authenticationPoint = ALM.isAuthenticated()
+  loginResponse = ALM.login(authenticationPoint, ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
+  # do something here
+  ALM.logout()
+  
+See test directory in the gem for more details.
+
+http://github.com/xiaomengzheng/alm-rest-api/tree/master/test/
+
+== INSTALL:
+
+* gem install alm-rest-api
+
+== DOCS:
+
+http://rdoc.info/projects/xiaomengzheng/alm-rest-api

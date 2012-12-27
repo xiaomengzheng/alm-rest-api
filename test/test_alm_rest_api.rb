@@ -71,11 +71,12 @@ class TestALMRestAPI < Test::Unit::TestCase
   end
   
   def test_CreateDeleteDefect
-    if true # change to true if you want run the test case
+    if false # change to true if you want run the test case
     loginResponse = ALM.isLoggedIn(ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
     assert(loginResponse, "failed to login.")
     
-    defect = Entity.new("defect")
+    defect = Entity.new
+    defect.init("defect")
     
     defectFields = ALM.getDefectFields(true)
     valueLists = ALM.getValueLists(defectFields)
@@ -110,6 +111,50 @@ class TestALMRestAPI < Test::Unit::TestCase
         assert(deleteResponse, "failed to delete defect.")
       end
     end
+    
+    ALM.logout()
+    end
+  end
+  
+  def test_ReadDefect
+    if false # change to true if you want run the test case
+    loginResponse = ALM.isLoggedIn(ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
+    assert(loginResponse, "failed to login.")
+
+    defectId = '20829' # replace with real defect id  
+    defect = ALM.readDefect(defectId)
+    puts defect.to_xml
+    
+    ALM.logout()
+    end
+  end
+  
+  def test_AddDefectAttachment
+    if true # change to true if you want run the test case
+    loginResponse = ALM.isLoggedIn(ALM::Constants::USERNAME, ALM::Constants::PASSWORD)
+    assert(loginResponse, "failed to login.")
+
+    
+    defectId = '20829' # replace with real defect id  
+    if ALM::Constants::VERSIONED
+      checkout = ALM.checkoutDefect(defectId, "check out comment1", -1)
+      puts checkout
+    else
+      lock = ALM.lockDefect(defectId)
+      puts lock
+    end
+    
+    dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'test'))
+    location = ALM.addDefectAttachment(defectId, dir + "/attachment.txt", "text/plain", "some random description")
+    puts location
+    
+    if ALM::Constants::VERSIONED
+      checkin = ALM.checkinDefect(defectId)
+      puts checkin
+    else
+      unlock = ALM.unlockDefect(defectId)
+      puts unlock
+    end    
     
     ALM.logout()
     end
